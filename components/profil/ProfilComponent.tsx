@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
 import { ExternalLink, LogOut } from 'lucide-react-native'
 import React from 'react'
 
-import { useRouter } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { useUserStore } from '@/stores/useStore'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
@@ -22,7 +22,9 @@ const ProfilComponent = () => {
       <hr />
 
       <View  style={{gap: 10, width:  '100%', alignItems: 'center'}}>
-        <Text style={styles.showProfil}><ExternalLink/> Mon profil</Text>
+        <Link href={'/profil'}>
+          <Text style={styles.showProfil}><ExternalLink/> Mon profil</Text>
+        </Link>
         <Pressable onPress={logOut}>
             <Text style={styles.logOut}> <LogOut/> Se déconnecter</Text>
         </Pressable>
@@ -68,5 +70,4 @@ const styles = StyleSheet.create({
         height: 60,
         borderRadius: 100   
     }
-
 })

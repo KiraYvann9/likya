@@ -110,7 +110,7 @@ const index = () => {
 
             <Text style={styles.headerTitle}>Créer un compte</Text>
 
-            <Pressable onPress={() => router.push("/settings")} >
+            <Pressable onPress={() => router.push("/")} >
               <CircleX  size={24} />
             </Pressable>
           </View>
