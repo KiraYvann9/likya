@@ -27,7 +27,11 @@ const Layout = () => {
               presentation: 'transparentModal', animation:'fade', headerShown:false}}/>
 
             <Stack.Screen name='settings/index' options={{headerTitle: 'Paramètres'}}/>
-            <Stack.Screen name='settings/create/index' options={{headerTitle: 'Créer un compte', 
+
+            <Stack.Screen name='settings/create/index' options={{headerTitle: 'Créer un compte',
+              presentation: 'transparentModal', animation:'fade', headerShown:false}}/>
+
+            <Stack.Screen name='settings/permissions/index' options={{headerTitle: 'Gérer les rôle et permissions',
               presentation: 'transparentModal', animation:'fade', headerShown:false}}/>
           </Stack>
         </View>

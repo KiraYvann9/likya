@@ -3,7 +3,7 @@ import {persist, devtools} from 'zustand/middleware';
 
 import axios from 'axios'
 import { router } from 'expo-router';
-import { ToastMessage } from '@/services/toast';
+import {ToastMessage} from '@/services/toast';
 
 interface user {
     user: any,

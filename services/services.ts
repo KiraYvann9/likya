@@ -19,6 +19,22 @@ export const fetchData = async(endpoint: string) =>{
     }
 }
 
+export const fetchOneData = async(endpoint: string) =>{
+    const {user} = useUserStore.getState();
+    try {
+        const req = await axios.get(`${baseUrl}${endpoint}`, {
+            headers: {
+                'Content-Type':  'application/json',
+                'Authorization': `Bearer ${user?.access_token}`
+            }
+        })
+        return req.data
+    }catch(err){
+        console.log('Fecth error', err);
+
+    }
+}
+
 export const postData = async(endpoint: string, data: any) =>{
     const {user} = useUserStore.getState();
     try {
@@ -34,6 +50,7 @@ export const postData = async(endpoint: string, data: any) =>{
         
     }
 }
+
 export const updateData = async(endpoint: string, data: any) =>{
     const {user} = useUserStore.getState();
     try {

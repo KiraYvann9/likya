@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native'
 import React, { useState } from 'react'
 
 import { globalStyle } from '@/styles/globa'
-import { History, RefreshCcwDot, UserPlus } from 'lucide-react-native'
+import {History, Key, RefreshCcwDot, UserPlus} from 'lucide-react-native'
 import { useRouter } from 'expo-router'
 
 
@@ -33,13 +33,13 @@ const index = () => {
 
         <View style={styles.cardContainer}>
 
-          <Pressable  style={[styles.card, { backgroundColor: '#F36F21',}]} onPress={()=>router.push('/settings/create')}>
+          <Pressable  style={[styles.card, { backgroundColor: '#F36F21',}]} onPress={()=>router.push("/settings/create")}>
             <Text style={styles.text}><UserPlus/> Créer un compte</Text>
           </Pressable>
           
-          <View  style={[styles.card, { backgroundColor: '#9656FC',}]}>
-            <Text style={styles.text}><History/>Historique</Text>
-          </View>
+          <Pressable  style={[styles.card, { backgroundColor: '#9656FC',}]} onPress={()=>router.push("/settings/permissions")}>
+            <Text style={styles.text}><Key/>Roles et Permissions</Text>
+          </Pressable>
           <View  style={[styles.card, { backgroundColor: '#18937F',}]}>
             <Text style={styles.text}><RefreshCcwDot/> Rembourssement</Text>
           </View>
