@@ -1,12 +1,13 @@
-import { View, Text, StyleSheet, Button, Pressable, Alert, Switch } from 'react-native'
+import { View, Text, StyleSheet, Switch, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import { Ellipsis } from 'lucide-react-native'
 
 import {Menu, MenuProvider, MenuTrigger, MenuOptions, MenuOption, } from 'react-native-popup-menu'
 import alert from '@/services/alert'
-import { deleData } from '@/services/services'
+import {changeStatus, deleData} from '@/services/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ToastMessage } from '@/services/toast'
+import id from "ajv/lib/vocabularies/core/id";
 type userType = {
   fullname: string,
   role: string,
@@ -21,9 +22,6 @@ type userType = {
 
 export const DataTable = ({data}: {data:userType[]}) => {
 
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-
   console.log('Table User', data)
   const queryClient = useQueryClient()
 
@@ -33,12 +31,17 @@ export const DataTable = ({data}: {data:userType[]}) => {
     return response.data
   }
 
+  const activeUserToggle = async({id, action}:{id: string, action: string}) =>{
+    const response = await changeStatus(`/users/${id}/activate?action=${action}`)
+    return response.data
+  }
+
   
-  const deleteMutation = useMutation({
-    mutationFn: deletUser,
+  const changeStatusMutation = useMutation({
+    mutationFn: activeUserToggle,
     onSuccess: ()=>{
       console.log('Delete Success')
-      new ToastMessage('Utilisateur supprimer avec succès !').successToast()
+      new ToastMessage('Status mise à jour avec succès !').successToast()
       queryClient.invalidateQueries({queryKey: ['users']})
     },
     onError: ()=>{
@@ -46,8 +49,8 @@ export const DataTable = ({data}: {data:userType[]}) => {
     }
   })
 
-  const onDeleteUser = (id: string) =>{
-    deleteMutation.mutate(id)
+  const onStatusChange = (id: string, action: string) =>{
+    changeStatusMutation.mutate({id, action})
   }
 
   return (
@@ -81,13 +84,18 @@ export const DataTable = ({data}: {data:userType[]}) => {
             <View style={{width: '20%'}}><Text>{item.phonenumber}</Text></View>
             <View style={{width: '30%'}}><Text>{item.email}</Text></View>
             <View style={{width: '10%'}}>
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={item?.is_active ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={toggleSwitch}
-              value={item?.is_active}
-            />
+
+              <Switch
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={item?.is_active ? '#f5dd4b' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={(value)=> {
+                  const action = value === true ? 'activate' : 'deactivate'
+                  onStatusChange(item?._id, action)
+                }}
+                value={item?.is_active}
+              />
+
             </View>
 
             <View style={{width: '10%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
@@ -98,11 +106,6 @@ export const DataTable = ({data}: {data:userType[]}) => {
                 <MenuOptions optionsContainerStyle={styles.menuOption}>
                   <MenuOption><Text>Détail</Text></MenuOption>
                   <MenuOption><Text>Editer</Text></MenuOption>
-                  <MenuOption onSelect={()=>onDeleteUser(item?._id)}>
-                      <Text>Suprimer</Text>
-                    {/* <Pressable>
-                    </Pressable> */}
-                  </MenuOption>
                 </MenuOptions>
               </Menu>
                 

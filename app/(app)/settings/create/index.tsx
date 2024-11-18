@@ -18,13 +18,18 @@ const getRoles = async()=>{
   return req.items
 }
 
+const adressTyoe = z.object({
+  address: z.string()
+})
 
 const schema = z.object({
   fullname: z.string({message: ''}).min(2),
-  phonenumber: z.string({message: ''}).min(2),
+  phonenumber: z.string({message: ''})
+      .regex(/^\+\d{11,15}$/, "Le numéro de téléphone doit commencer par '+' suivi de 11 à 15 chiffres."),
   email: z.string({message: ''}),
   password: z.string({message: ''}).min(2,  {message: 'le mot de passe doit contenir au moins  8 caracteres'}),
   role: z.string({message: ''}),
+  attributes: z.record(z.string(), z.any()),
 })
 
 interface RoleType {
@@ -39,6 +44,7 @@ const index = () => {
   
 
   const queryClient = useQueryClient()
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -47,6 +53,7 @@ const index = () => {
       email: '',
       password: '',
       role: '',
+      attributes: {}
       },
   })
 
@@ -77,6 +84,8 @@ const index = () => {
 
   const  onSubmit = async(data: any) => {
     mutation.mutate(data)
+
+    //console.log('New User :', data)
   }
 
   return (
@@ -128,10 +137,9 @@ const index = () => {
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>N° Téléphone <Text style={{color: 'red'}}>*</Text></Text>
                   <TextInput keyboardType='numeric' style={styles.input} placeholder='' onChangeText={data => form.setValue('phonenumber', data)} />
+                  {form.formState.errors.phonenumber && <Text style={styles.error}>{form.formState.errors.phonenumber.message||''}</Text>}
                 </View>
 
-                
-                {/* {errors.phonenumber && <Text>{errors.phonenumber.message||''}</Text>} */}
 
               </View>
               <View style={{display:  'flex', flexDirection: 'row', gap:  10, alignItems: 'center'}}>
@@ -146,6 +154,18 @@ const index = () => {
                   <Text style={styles.label}>Mot de passe <Text style={{color: 'red'}}>*</Text></Text>
                   <TextInput style={styles.input} placeholder='*********' secureTextEntry={true} onChangeText={data => form.setValue('password', data)}/>
                 </View>
+
+              </View>
+
+              <View style={{display:  'flex', flexDirection: 'row', gap:  10, alignItems: 'center'}}>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Adresse (lieu) <Text style={{color: 'red'}}>*</Text></Text>
+                  <TextInput keyboardType='email-address' style={styles.input} placeholder='' onChangeText={data => form.setValue('attributes', {'adress': data})} />
+                </View>
+
+
+
 
               </View>
               <View style={{display:  'flex', flexDirection: 'row', gap:  10, alignItems: 'center'}}>
@@ -268,6 +288,10 @@ const styles = StyleSheet.create({
       borderRadius:   5,
       fontSize:   18,
       padding:   10,
+  },
+  error:{
+    fontSize: 12,
+    color: 'red'
   },
   btn: {
       width: '100%',

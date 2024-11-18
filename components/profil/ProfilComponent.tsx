@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 20,
         fontWeight: 'bold',
+        textAlign: 'center'
     },
     showProfil: {
         fontSize: 15,

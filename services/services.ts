@@ -64,3 +64,20 @@ export const deleData = async(endpoint: string) =>{
         
     }
 }
+
+
+export const changeStatus = async(endpoint: string) =>{
+    const {user} = useUserStore.getState();
+    try {
+        const req = await axios.put(`${baseUrl}${endpoint}`, {}, {
+            headers: {
+                'Content-Type':  'application/json',
+                'Authorization': `Bearer ${user?.access_token}`
+            }
+        })
+        return req.data
+    }catch(err){
+        console.log('Fecth error', err);
+
+    }
+}

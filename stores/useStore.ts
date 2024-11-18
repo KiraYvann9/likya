@@ -8,6 +8,7 @@ import { ToastMessage } from '@/services/toast';
 interface user {
     user: any,
     login:(data: {phonenumber: string, password: string})=>any;
+    updateUser : (data: any)=>any;
     logOut: ()=>any;
 }
 
@@ -28,6 +29,10 @@ export const useUserStore = create<user>()(persist((set, get)=>({
         }catch(err: any){
             throw err
         }
+    },
+    updateUser: (data) =>{
+        const {user} = get()
+        set({...user, data})
     },
     logOut: async() => {
         const {user} = get()
