@@ -29,7 +29,12 @@ const schema = z.object({
   email: z.string({message: ''}),
   password: z.string({message: ''}).min(2,  {message: 'le mot de passe doit contenir au moins  8 caracteres'}),
   role: z.string({message: ''}),
-  attributes: z.record(z.string(), z.any()),
+  attributes: z.object({
+    address: z.string({}).optional(),
+    compte_bancaire: z.string({}).optional()
+  }),
+
+  //z.record(z.string(), z.any())
 })
 
 interface RoleType {
@@ -53,8 +58,11 @@ const index = () => {
       email: '',
       password: '',
       role: '',
-      attributes: {}
-      },
+      attributes: {
+        address: '',
+        compte_bancaire: '',
+      }
+    },
   })
 
   const [selectedRole, setSelectedRole] = useState<any>()
@@ -84,8 +92,6 @@ const index = () => {
 
   const  onSubmit = async(data: any) => {
     mutation.mutate(data)
-
-    //console.log('New User :', data)
   }
 
   return (
@@ -127,6 +133,7 @@ const index = () => {
           <View  style={styles.main}>
 
             <View style={styles.formGroup}>
+
               <View style={{display:  'flex', flexDirection: 'row', gap:  10, alignItems: 'center'}}>
 
                 <View style={styles.inputGroup}>
@@ -139,7 +146,6 @@ const index = () => {
                   <TextInput keyboardType='numeric' style={styles.input} placeholder='' onChangeText={data => form.setValue('phonenumber', data)} />
                   {form.formState.errors.phonenumber && <Text style={styles.error}>{form.formState.errors.phonenumber.message||''}</Text>}
                 </View>
-
 
               </View>
               <View style={{display:  'flex', flexDirection: 'row', gap:  10, alignItems: 'center'}}>
@@ -161,13 +167,16 @@ const index = () => {
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>Adresse (lieu) <Text style={{color: 'red'}}>*</Text></Text>
-                  <TextInput keyboardType='email-address' style={styles.input} placeholder='' onChangeText={data => form.setValue('attributes', {'adress': data})} />
+                  <TextInput keyboardType='email-address' style={styles.input} placeholder='' onChangeText={data => form.setValue('attributes.address', data)} />
                 </View>
 
-
-
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>N° Compte bancaire <Text style={{color: 'red'}}>*</Text></Text>
+                  <TextInput keyboardType='default' style={styles.input} placeholder='' onChangeText={data => form.setValue('attributes.compte_bancaire', data)} />
+                </View>
 
               </View>
+
               <View style={{display:  'flex', flexDirection: 'row', gap:  10, alignItems: 'center'}}>
 
                 <View style={styles.inputGroup}>
@@ -186,6 +195,7 @@ const index = () => {
                   }
                   style={styles.input}
                   >
+                    <Picker.Item label={'Selectionnez un rôle'} value={null}/>
                     {
                       roles && roles.map((role: any)=> <Picker.Item label={role.name} value={role._id}  key={role._id}/>)
                     }
