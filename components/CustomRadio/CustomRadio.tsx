@@ -1,17 +1,18 @@
 import {View, StyleSheet, TouchableOpacity, Text, Pressable} from "react-native";
 import {MaterialIcons} from '@expo/vector-icons'
 import {deleData, fetchOneData, postData} from "@/services/services";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {ToastMessage} from "@/services/toast";
 import {Trash} from "lucide-react-native";
 interface RadioProps {
-    options: Array<{ _id: string, name: string }>,
+    options: Array<{ _id: string, name: string , permissions: Array<any>}>,
     checkedValue: string|undefined,
     onChange?: (value: any) => void,
+    setSelectedRoleDetail?: (value: any) => void,
     style?: any,
 }
 
-export default function CustomRadio({onChange, checkedValue, options, style}: RadioProps){
+export default function CustomRadio({onChange, checkedValue, setSelectedRoleDetail, options, style}: RadioProps){
     const queryClient = useQueryClient()
 
 
@@ -20,10 +21,6 @@ export default function CustomRadio({onChange, checkedValue, options, style}: Ra
         return response.data
     }
 
-    const getRoleDetails = async (id: string) =>{
-        const response = await fetchOneData(`/roltes/${id}`)
-        return response.data
-    }
 
     const deleRoleMutation = useMutation({
         mutationFn: deleRole,
@@ -37,6 +34,8 @@ export default function CustomRadio({onChange, checkedValue, options, style}: Ra
         deleRoleMutation.mutate(id)
     }
 
+
+
     return(
         <View style={[styles.container, style]}>
             {
@@ -48,6 +47,7 @@ export default function CustomRadio({onChange, checkedValue, options, style}: Ra
                         < TouchableOpacity
                             onPress = {() => {
                                 onChange(option?._id)
+                                setSelectedRoleDetail(option?.permissions)
                             } }
                             style = {[styles.radio, {backgroundColor: !active ?'#f5f5f5':'#d4d4d4',}]} >
                             <View style={{display: 'flex', flexDirection: 'row', gap: 4}}>

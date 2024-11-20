@@ -54,7 +54,7 @@ const index = () => {
     }
   })
 
-  const [selectedRole, setSelectedRole] = useState<any>()
+  const [selectedRoleDetail, setSelectedRoleDetail] = useState<any | undefined>()
 
   const {data: roles, isLoading, isError} = useQuery({
     queryKey: ['roles'],
@@ -71,6 +71,7 @@ const index = () => {
     const req = await postData('/roles', data)
     return req.data
   }
+
 
 
 
@@ -91,6 +92,8 @@ const index = () => {
     mutation.mutate(data)
     console.log('New Role :', data)
   }
+
+  console.log('Role :', selectedRoleDetail)
 
   return (
     <Animated.View
@@ -156,7 +159,7 @@ const index = () => {
 
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>Selectionnez le role <Text style={{color: 'red'}}>*</Text> (<Text style={{fontSize: 12, color: '#4d4d4d'}}>Sélectionnez un rôle afin de lui assigner des permissions</Text>)</Text>
-                    <CustomRadio options={roles || []} checkedValue={checkedRole} onChange={setCheckedRole}/>
+                    <CustomRadio setSelectedRoleDetail={setSelectedRoleDetail} options={roles || []} checkedValue={checkedRole} onChange={setCheckedRole}/>
                   </View>
 
                 </View>
@@ -192,21 +195,38 @@ const index = () => {
 
                           index === currentAccordionIndex &&
                           <View style={{backgroundColor: '#f6f6f6', padding: 10}}>
-                            {permission?.permissions?.map((item: any, index: number)=>(
-                                <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', padding: 5}} key={index}>
-                                  <Switch
-                                      trackColor={{false: '#767577', true: '#81b0ff'}}
-                                      thumbColor={true ? '#f5dd4b' : '#f4f3f4'}
-                                      ios_backgroundColor="#3e3e3e"
-                                      onValueChange={(value)=> {
-                                        const action = value === true ? 'activate' : 'deactivate'
-                                        //onStatusChange(item?._id, action)
-                                      }}
-                                      //value={''}
-                                  />
-                                  <Text>{item?.desc?.fr}</Text>
-                                </View>
-                            ))}
+                            {permission?.permissions?.map((item: any, index: number)=> {
+
+                              selectedRoleDetail && selectedRoleDetail[0]?.permissions.map( (permission: any) => {
+
+                                    let active = permission.code == item.code
+                                    console.log('Active :', active)
+                              })
+
+
+                              return(
+                                  <View style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    gap: 10,
+                                    alignItems: 'center',
+                                    padding: 5
+                                  }} key={index}>
+                                    <Switch
+                                        trackColor={{false: '#767577', true: '#81b0ff'}}
+                                        thumbColor={true ? '#f5dd4b' : '#f4f3f4'}
+                                        ios_backgroundColor="#3e3e3e"
+                                        onValueChange={(value) => {
+                                          const action = value === true ? 'activate' : 'deactivate'
+                                          //onStatusChange(item?._id, action)
+                                        }}
+                                        //value={''}
+                                    />
+                                    <Text>{item?.desc?.fr}</Text>
+                                  </View>
+                              )
+                                }
+                            )}
                           </View>
 
                         }
