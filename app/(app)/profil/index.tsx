@@ -64,7 +64,6 @@ const index = () => {
 
   const onSubmit = (data: any) =>{
     updateMutation.mutate(data)
-    //updateUser(data)
   }
 
 
@@ -134,7 +133,6 @@ const index = () => {
             <View>
               <Text style={{ fontSize: 18, fontWeight: "700" }}>N° Téléphone</Text>
               <Text style={{ fontSize: 22, fontWeight: "400" }}>{user?.user.phonenumber}</Text>
-
             </View>
 
             <View>

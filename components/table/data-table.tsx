@@ -8,6 +8,8 @@ import {changeStatus, deleData} from '@/services/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ToastMessage } from '@/services/toast'
 import id from "ajv/lib/vocabularies/core/id";
+import {useUserUpdate} from "@/stores/useUserUpdateStore";
+import {router} from "expo-router";
 type userType = {
   fullname: string,
   role: string,
@@ -22,7 +24,8 @@ type userType = {
 
 export const DataTable = ({data}: {data:userType[]}) => {
 
-  console.log('Table User', data)
+  const {setISEdit, setIsShow} = useUserUpdate()
+
   const queryClient = useQueryClient()
 
   const deletUser = async(id: string) =>{
@@ -104,8 +107,14 @@ export const DataTable = ({data}: {data:userType[]}) => {
                   <Ellipsis  size={16} color={'#4D4D4D'} />
                 </MenuTrigger>
                 <MenuOptions optionsContainerStyle={styles.menuOption}>
-                  <MenuOption><Text>Détail</Text></MenuOption>
-                  <MenuOption><Text>Editer</Text></MenuOption>
+                  <MenuOption onSelect={()=> {
+                    setIsShow(item)
+                    router.push("/settings/create")
+                  }}><Text>Détail</Text></MenuOption>
+                  <MenuOption onSelect={()=> {
+                    setISEdit(item)
+                    router.push("/settings/create")
+                  }}><Text>Editer</Text></MenuOption>
                 </MenuOptions>
               </Menu>
                 

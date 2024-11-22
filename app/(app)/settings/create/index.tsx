@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router, useRouter } from 'expo-router';
 import { CircleAlert, CircleX } from 'lucide-react-native';
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { useForm } from 'react-hook-form';
 import { View, Text, Pressable, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'react-native'
 import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
@@ -11,6 +11,7 @@ import {Picker} from '@react-native-picker/picker';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchData, postData } from '@/services/services'
 import { ToastMessage } from '@/services/toast';
+import {useUserUpdate} from "@/stores/useUserUpdateStore";
 
 
 const getRoles = async()=>{
@@ -46,7 +47,7 @@ interface RoleType {
 
 const index = () => {
 
-  
+  const {isShow, isEdit, user, closeModal} = useUserUpdate()
 
   const queryClient = useQueryClient()
 
@@ -94,6 +95,10 @@ const index = () => {
     mutation.mutate(data)
   }
 
+  useEffect(() => {
+    if(user) console.log('Selected User :', user)
+  }, []);
+
   return (
     <Animated.View
       entering={FadeIn}
@@ -123,9 +128,12 @@ const index = () => {
 
           <View style={styles.header}>
 
-            <Text style={styles.headerTitle}>Créer un compte</Text>
+            <Text style={styles.headerTitle}>{!isEdit ? 'Créer un compte':'Modifier le compte'}</Text>
 
-            <Pressable onPress={() => router.push("/settings")} >
+            <Pressable onPress={() => {
+              router.push("/settings")
+              closeModal()
+              }} >
               <CircleX  size={24} />
             </Pressable>
           </View>
@@ -138,12 +146,12 @@ const index = () => {
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>Nom et Prénoms <Text style={{color: 'red'}}>*</Text></Text>
-                  <TextInput style={styles.input} placeholder='' onChangeText={data => form.setValue('fullname', data)}/>
+                  <TextInput style={styles.input} defaultValue={user && user.fullname} placeholder='' onChangeText={data => form.setValue('fullname', data)}/>
                 </View>
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>N° Téléphone <Text style={{color: 'red'}}>*</Text></Text>
-                  <TextInput keyboardType='numeric' style={styles.input} placeholder='' onChangeText={data => form.setValue('phonenumber', data)} />
+                  <TextInput keyboardType='numeric' defaultValue={user && user.phonenumber} style={styles.input} placeholder='' onChangeText={data => form.setValue('phonenumber', data)} />
                   {form.formState.errors.phonenumber && <Text style={styles.error}>{form.formState.errors.phonenumber.message||''}</Text>}
                 </View>
 
@@ -152,13 +160,12 @@ const index = () => {
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>E-mail <Text style={{color: 'red'}}>*</Text></Text>
-                  <TextInput keyboardType='email-address' style={styles.input} placeholder='' onChangeText={data => form.setValue('email', data)} />
+                  <TextInput keyboardType='email-address' defaultValue={user && user.email} style={styles.input} placeholder='' onChangeText={data => form.setValue('email', data)} />
                 </View>
 
-                    {/* {errors.phonenumber && <Text>{errors.phonenumber.message||''}</Text>} */}
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>Mot de passe <Text style={{color: 'red'}}>*</Text></Text>
-                  <TextInput style={styles.input} placeholder='*********' secureTextEntry={true} onChangeText={data => form.setValue('password', data)}/>
+                  <TextInput style={styles.input} defaultValue={user && user.password} placeholder='*********' secureTextEntry={true} onChangeText={data => form.setValue('password', data)}/>
                 </View>
 
               </View>
@@ -167,12 +174,12 @@ const index = () => {
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>Adresse (lieu) <Text style={{color: 'red'}}>*</Text></Text>
-                  <TextInput keyboardType='email-address' style={styles.input} placeholder='' onChangeText={data => form.setValue('attributes.address', data)} />
+                  <TextInput keyboardType='email-address' defaultValue={user && user?.attributes?.adress} style={styles.input} placeholder='' onChangeText={data => form.setValue('attributes.address', data)} />
                 </View>
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>N° Compte bancaire <Text style={{color: 'red'}}>*</Text></Text>
-                  <TextInput keyboardType='default' style={styles.input} placeholder='' onChangeText={data => form.setValue('attributes.compte_bancaire', data)} />
+                  <TextInput keyboardType='default' defaultValue={user && user?.attributes?.compte_bancaire} style={styles.input} placeholder='' onChangeText={data => form.setValue('attributes.compte_bancaire', data)} />
                 </View>
 
               </View>
@@ -182,7 +189,7 @@ const index = () => {
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>Selectionnez le role <Text style={{color: 'red'}}>*</Text></Text>
                   <Picker
-                  selectedValue={selectedRole}
+                  selectedValue={ selectedRole }
                   onValueChange={
                     (value, index)=>{
                       form.setValue('role', value)
@@ -197,22 +204,24 @@ const index = () => {
                   >
                     <Picker.Item label={'Selectionnez un rôle'} value={null}/>
                     {
-                      roles && roles.map((role: any)=> <Picker.Item label={role.name} value={role._id}  key={role._id}/>)
+                      roles && roles.map((role: any)=> {
+                        return(
+                          <Picker.Item label={role.name} value={role._id} key={role._id}/>
+                        )
+                      })
                     }
                     
                   </Picker>
                 </View>
                 
               </View>
-              
 
-              {/* <TextInput multiline={true} numberOfLines={5} style={styles.textarea} placeholder='Description'/> */}
+
                 <TouchableOpacity style={styles.btn} onPress={form.handleSubmit(onSubmit)} disabled={mutation.isPending}>
                     <Text style={{textAlign: 'center', color: "#fff", fontSize:26}}>Enregistrer</Text>
                 </TouchableOpacity>
 
                 <View style={styles.roleDescription}>
-                  {/* <CircleAlert color={'#d4d4d4'}/> */}
 
                   <View style={{padding: 10}}>
                     {
