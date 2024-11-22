@@ -23,6 +23,7 @@ const Layout = () => {
             <Stack.Screen name='invoices/index' options={{headerTitle: 'Factures'}}/>
 
             <Stack.Screen name='profil/index' options={{headerTitle: 'Mon Profil'}}/>
+            <Stack.Screen name='qrcode/index' options={{headerTitle: 'QR-Code'}}/>
             <Stack.Screen name='profil/update/index' options={{headerTitle: 'Mettre à jour mon profil', 
               presentation: 'transparentModal', animation:'fade', headerShown:false}}/>
 

@@ -52,19 +52,19 @@ export const sidebarItems: sidebarItem[] = [
         link: "/qrcode",
         permission: ['prestataire']
     },
-    {
-        id:  7,
-        title: 'Services',
-        icon: Stethoscope,
-        link: "/qrcode",
-        permission: ['prestataire']
-    },
-    {
-        id:  8,
-        title: 'Medicaments',
-        icon: Pill,
-        link: "/qrcode",
-        permission: ['prestataire']
-    },
+    // {
+    //     id:  7,
+    //     title: 'Services',
+    //     icon: Stethoscope,
+    //     link: "/qrcode",
+    //     permission: ['prestataire']
+    // },
+    // {
+    //     id:  8,
+    //     title: 'Medicaments',
+    //     icon: Pill,
+    //     link: "/qrcode",
+    //     permission: ['prestataire']
+    // },
     
 ]
