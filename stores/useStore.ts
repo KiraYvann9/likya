@@ -32,7 +32,7 @@ export const useUserStore = create<user>()(persist((set, get)=>({
     },
     updateUser: (data) =>{
         const {user} = get()
-        set({...user, data})
+        set({...user, ...data})
     },
     logOut: async() => {
         const {user} = get()

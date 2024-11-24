@@ -63,6 +63,8 @@ const index = () => {
   })
 
   const onSubmit = (data: any) =>{
+    console.log('update data :', data)
+    updateUser(data)
     updateMutation.mutate(data)
   }
 
